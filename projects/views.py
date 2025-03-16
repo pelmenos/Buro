@@ -22,6 +22,8 @@ class StageList(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Stage.objects.none()
         return Stage.objects.filter(project_id=self.kwargs['project_id'])
 
     def perform_create(self, serializer):
@@ -39,9 +41,13 @@ class TaskViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Task.objects.none()
         return Task.objects.filter(stage_id=self.kwargs['stage_id'])
 
     def perform_create(self, serializer):
+        if getattr(self, 'swagger_fake_view', False):
+            return
         serializer.save(stage=get_object_or_404(Stage, pk=self.kwargs['stage_id']))
 
 
@@ -53,9 +59,14 @@ class TaskFileViewSet(mixins.CreateModelMixin,
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return TaskFile.objects.none()
+
         return TaskFile.objects.filter(task_id=self.kwargs['task_id'])
 
     def perform_create(self, serializer):
+        if getattr(self, 'swagger_fake_view', False):
+            return
         serializer.save(user=self.request.user, task=get_object_or_404(Task, pk=self.kwargs['task_id']))
 
 
@@ -68,9 +79,14 @@ class CommentViewSet(mixins.CreateModelMixin,
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Comment.objects.none()
+
         return Comment.objects.filter(task_id=self.kwargs['task_id'])
 
     def perform_create(self, serializer):
+        if getattr(self, 'swagger_fake_view', False):
+            return
         serializer.save(user=self.request.user, task=get_object_or_404(Task, pk=self.kwargs['task_id']))
 
 
@@ -83,9 +99,13 @@ class TaskUserViewSet(mixins.CreateModelMixin,
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return TaskUser.objects.none()
         return TaskUser.objects.filter(task_id=self.kwargs['task_id'])
 
     def perform_create(self, serializer):
+        if getattr(self, 'swagger_fake_view', False):
+            return
         serializer.save(task=get_object_or_404(Task, pk=self.kwargs['task_id']))
 
 
